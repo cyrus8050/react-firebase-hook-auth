@@ -3,27 +3,16 @@ import './App.css';
 import Home from './components/Home';
 import Signin from './components/Signin';
 import { auth } from './firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 function App() {
-  const [user, setUser] = useState(null)
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(userAuth => {
-      const user = {
-        uid: userAuth?.uid,
-        email: userAuth?.email
-      }
-      if (userAuth) {
-        console.log(userAuth)
-        setUser(user)
-      } else {
-        setUser(null)
-      }
-    })
-    return unsubscribe
-  }, [])
+  const [user, loading, error] = useAuthState(auth);
+
   return (
     <div className="App">
-      {user ? <Home /> : <Signin />}
+      
+
+      {loading?<p>loading...</p>:user ? <Home /> : <Signin />}
 
     </div>
   );

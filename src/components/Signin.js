@@ -1,31 +1,26 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { auth } from '../firebase';
+import { useSignInWithEmailAndPassword, useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+
 import './Signin.css'
 const Signin = () => {
+    useEffect(() => {
+        
+        return null;
+    }, [])
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
+    const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
+    const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth, '', '');
     const signUp = e => {
         e.preventDefault();
-        auth.createUserWithEmailAndPassword(
-            emailRef.current.value,
-            passwordRef.current.value
-        ).then(user => {
-            console.log(user)
-        }).catch(err => {
-            console.log(err)
-        })
+        createUserWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
     }
     const signIn = e => {
         e.preventDefault();
-        auth.signInWithEmailAndPassword(
-            emailRef.current.value,
-            passwordRef.current.value
-        ).then(user => {
-            console.log(user)
-        }).catch(err => {
-            console.log(err)
-        })
+        signInWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
     }
+
     return (
         <div className="signin">
             <form action="">
