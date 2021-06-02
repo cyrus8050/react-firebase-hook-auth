@@ -1,18 +1,31 @@
 import React, { useRef, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import db, { auth, storage } from '../firebase'
+import { useCollection } from 'react-firebase-hooks/firestore';
+import firebase from 'firebase'
+import  {db, auth, storage } from '../firebase'
 import './Home.css'
+import Card from './Card';
 const Home = () => {
     const [image, setImage] = useState(null)
     const [user, loading, error] = useAuthState(auth);
     const imageRef = useRef(null)
     const msgRef = useRef(null)
+
+    const [rposts] = useCollection(
+        firebase.firestore().collection('posts')
+    );
+    const [realtimePosts] = useCollection(
+        db.collection("posts").orderBy("timestamp", "desc")
+    );
+
     const onSubmitHandler = e => {
         e.preventDefault();
         console.log('submit')
         db.collection('posts').add({
             message: msgRef.current.value,
-            email: user.email
+            email: user.email,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+
         }).then(doc => {
             if (image) {
                 const storageRef = storage.ref();
@@ -23,6 +36,7 @@ const Home = () => {
                     null,
                     (error) => {
                         // Handle unsuccessful uploads
+                        console.log(error)
                     },
                     () => {
                         // Handle successful uploads on complete
@@ -48,6 +62,8 @@ const Home = () => {
         }
 
     }
+
+  
     return (
         <div>
             <h1>Welcome home</h1>
@@ -65,6 +81,20 @@ const Home = () => {
                 )}</p>
 
             </form>
+
+            <div>
+                {console.log(rposts)}
+                {realtimePosts?.docs.map(post=>(
+                    <Card key={post.id}
+                    image={post.data().image}
+                    message={post.data().message}
+                    email={post.data().email}
+                    timestamp={post.data().timestamp}
+                    
+                    
+                    />
+                ))}
+            </div>
 
         </div>
     )
