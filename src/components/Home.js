@@ -29,7 +29,7 @@ const Home = () => {
         }).then(doc => {
             if (image) {
                 const storageRef = storage.ref();
-                var uploadTask = storageRef.child(`posts/${doc.id}`).put(image);
+                var uploadTask = storageRef.child(`posts/${doc.id}`).putString(image,'data_url');
                 setImage(null)
 
                 uploadTask.on('state_changed',
